@@ -93,6 +93,20 @@ const OnboardingDetails = () => {
     setIsLoading(true);
 
     try {
+      if (!API_BASE_URL) {
+        const storedRaw = localStorage.getItem('quickplate_user');
+        const storedObj = storedRaw ? JSON.parse(storedRaw) : {};
+        storedObj.fullName = form.fullName.trim();
+        storedObj.phone = form.phone.trim();
+        storedObj.address = address;
+        storedObj.profileComplete = true;
+        localStorage.setItem('quickplate_user', JSON.stringify(storedObj));
+        heavyTap();
+        toast.success('Profile created successfully!');
+        navigate('/home');
+        return;
+      }
+
       const idToken = await currentUser.getIdToken(true);
       
       await axios.patch(`${API_BASE_URL}/services/apexrest/customer/profile`, {
